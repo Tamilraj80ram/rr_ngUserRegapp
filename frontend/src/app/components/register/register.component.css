@@ -1,0 +1,95 @@
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+h1 {
+  margin: 0 0 24px;
+  font-size: 1.4rem;
+  color: #1a1a1a;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+input {
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d4d8de;
+  outline: none;
+  font-weight: 400;
+}
+
+input:focus {
+  border-color: #3f5efb;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.banner {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.banner.error {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.banner.success {
+  background: #e9f9ee;
+  color: #1e8449;
+}
+
+button {
+  margin-top: 22px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #3f5efb;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #a7b3fc;
+  cursor: not-allowed;
+}
+
+.switch {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  text-align: center;
+  color: #566076;
+}
+
+.switch a {
+  color: #3f5efb;
+  font-weight: 600;
+  text-decoration: none;
+}

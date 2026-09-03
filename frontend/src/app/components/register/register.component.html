@@ -1,0 +1,46 @@
+<div class="card">
+  <h1>Create an account</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      Full name
+      <input type="text" formControlName="fullName" placeholder="Jane Doe" />
+    </label>
+    <div class="error" *ngIf="f.fullName.touched && f.fullName.invalid">
+      Full name must be at least 2 characters.
+    </div>
+
+    <label>
+      Email
+      <input type="email" formControlName="email" placeholder="jane@example.com" />
+    </label>
+    <div class="error" *ngIf="f.email.touched && f.email.invalid">
+      Enter a valid email address.
+    </div>
+
+    <label>
+      Password
+      <input type="password" formControlName="password" placeholder="At least 6 characters" />
+    </label>
+    <div class="error" *ngIf="f.password.touched && f.password.invalid">
+      Password must be at least 6 characters.
+    </div>
+
+    <label>
+      Confirm password
+      <input type="password" formControlName="confirmPassword" />
+    </label>
+    <div class="error" *ngIf="f.confirmPassword.touched && passwordsMismatch">
+      Passwords do not match.
+    </div>
+
+    <div class="banner error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="banner success" *ngIf="successMessage">{{ successMessage }}</div>
+
+    <button type="submit" [disabled]="submitting">
+      {{ submitting ? 'Creating account…' : 'Register' }}
+    </button>
+  </form>
+
+  <p class="switch">Already have an account? <a routerLink="/login">Log in</a></p>
+</div>

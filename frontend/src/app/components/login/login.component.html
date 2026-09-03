@@ -1,0 +1,30 @@
+<div class="card">
+  <h1>Log in</h1>
+
+  <div class="banner success" *ngIf="loggedInUser">
+    Welcome back, {{ loggedInUser.fullName }}!
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loggedInUser">
+    <label>
+      Email
+      <input type="email" formControlName="email" placeholder="jane@example.com" />
+    </label>
+    <div class="error" *ngIf="f.email.touched && f.email.invalid">
+      Enter a valid email address.
+    </div>
+
+    <label>
+      Password
+      <input type="password" formControlName="password" />
+    </label>
+
+    <div class="banner error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <button type="submit" [disabled]="submitting">
+      {{ submitting ? 'Logging in…' : 'Log in' }}
+    </button>
+  </form>
+
+  <p class="switch">Don't have an account? <a routerLink="/register">Register</a></p>
+</div>

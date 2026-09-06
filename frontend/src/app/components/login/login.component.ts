@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService, UserResponse } from '../../services/auth.service';
@@ -12,6 +12,9 @@ import { AuthService, UserResponse } from '../../services/auth.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+
   submitting = false;
   errorMessage = '';
   loggedInUser: UserResponse | null = null;
@@ -20,8 +23,6 @@ export class LoginComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
-
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
 
   get f() {
     return this.form.controls;

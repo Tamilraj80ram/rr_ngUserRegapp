@@ -92,12 +92,23 @@ inter-service routing, put an API gateway (YARP, or Ocelot) in front of them.
 
 ## Deploying with GitHub Actions (auto-run on push)
 
-A workflow at `.github/workflows/deploy.yml` builds both projects on every push to
-`main`. Wire up the deploy steps for wherever you're hosting:
+A workflow at `.github/workflows/deploy.yml` runs on every push/PR to `main`:
+
+1. **`backend`** — builds `UserService` and runs the xUnit test suite (`UserService.Tests`).
+2. **`build-frontend`** — installs npm packages, runs the Jasmine/Karma test suite, then
+   builds the Angular app and uploads it as a Pages artifact.
+3. **`deploy-frontend`** — deploys to GitHub Pages, but only runs if **both** jobs above
+   succeed (`needs: [backend, build-frontend]`). A failing unit test in either project
+   blocks the deploy — it never reaches this step.
+
+Wire up the backend's own deploy step for wherever you're hosting it:
 
 - **Frontend** → GitHub Pages (already included) or any static host (Netlify, Vercel, S3).
 - **Backend** → Azure App Service, Render, Fly.io, or a container registry + VPS —
-  .NET Web APIs aren't static, so GitHub Pages can't host `UserService` itself.
+  .NET Web APIs aren't static, so GitHub Pages can't host `UserService` itself. The
+  commented-out `Deploy to Azure App Service` step in the `backend` job shows where to
+  add this once you have a target and the `AZURE_WEBAPP_PUBLISH_PROFILE` secret.
 
-See the workflow file for the exact steps and which repo secrets to add
-(e.g. `AZURE_WEBAPP_PUBLISH_PROFILE`).
+**Required one-time setup:** in the repo, go to **Settings → Pages** and set
+**Source → GitHub Actions** (not "Deploy from a branch") — this workflow deploys via
+GitHub's OIDC-based Pages action, not a `gh-pages` branch push.

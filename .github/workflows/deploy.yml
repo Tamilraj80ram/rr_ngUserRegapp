@@ -81,9 +81,11 @@ jobs:
         with:
           path: frontend/dist/frontend/browser
 
+  # Deployment only runs if BOTH the backend test job and the frontend build/test
+  # job succeed — a failing unit test in either project blocks the deploy.
   deploy-frontend:
     if: github.ref == 'refs/heads/main'
-    needs: build-frontend
+    needs: [backend, build-frontend]
     runs-on: ubuntu-latest
     environment:
       name: github-pages

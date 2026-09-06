@@ -81,11 +81,53 @@ jobs:
         with:
           path: frontend/dist/frontend/browser
 
-  # Deployment only runs if BOTH the backend test job and the frontend build/test
-  # job succeed — a failing unit test in either project blocks the deploy.
+  # Full end-to-end test: boots the real backend + real frontend together and
+  # drives them with a real browser via Playwright.
+  e2e:
+    needs: [backend, build-frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: npm install
+
+      - name: Install Playwright browsers
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright e2e tests
+        working-directory: e2e
+        run: npm run e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 14
+
+  # Deployment only runs if the backend tests, frontend build/unit tests, AND
+  # the full end-to-end suite all succeed.
   deploy-frontend:
     if: github.ref == 'refs/heads/main'
-    needs: [backend, build-frontend]
+    needs: [backend, build-frontend, e2e]
     runs-on: ubuntu-latest
     environment:
       name: github-pages

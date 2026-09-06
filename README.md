@@ -74,6 +74,35 @@ paths using a mocked `AuthService`), and a smoke test for `AppComponent`.
 Both suites run automatically in `.github/workflows/deploy.yml` on every push/PR, before
 the build/deploy steps.
 
+### End-to-end (Playwright)
+
+The `e2e/` folder is a separate small Playwright project that drives the real
+browser against the real Angular dev server and the real .NET API together —
+no mocking on either side.
+
+```bash
+cd e2e
+npm install
+npx playwright install --with-deps chromium   # one-time browser download
+npm run e2e            # headless run, auto-starts backend + frontend
+npm run e2e:ui         # interactive UI mode, great for debugging
+npm run e2e:headed     # watch the browser as it runs
+npm run e2e:report     # open the HTML report from the last run
+```
+
+Playwright's `webServer` config in `e2e/playwright.config.ts` automatically runs
+`dotnet run` for the backend and `ng serve` for the frontend before the tests start
+(and reuses already-running servers locally, so you don't have to start them
+yourself first). Covers:
+
+- **`register.spec.ts`** — successful registration + redirect to login, duplicate-email
+  conflict, inline validation errors.
+- **`login.spec.ts`** — successful login, wrong password, unknown email, invalid email format.
+- **`navigation.spec.ts`** — routing between the register/login pages and the top nav.
+
+Since the backend keeps users in memory for the life of the process, tests generate
+a unique email per run (`test-utils.ts`) rather than relying on a fixed fixture user.
+
 ## API summary
 
 | Method | Route                | Body                                   | Notes                        |
@@ -97,9 +126,11 @@ A workflow at `.github/workflows/deploy.yml` runs on every push/PR to `main`:
 1. **`backend`** — builds `UserService` and runs the xUnit test suite (`UserService.Tests`).
 2. **`build-frontend`** — installs npm packages, runs the Jasmine/Karma test suite, then
    builds the Angular app and uploads it as a Pages artifact.
-3. **`deploy-frontend`** — deploys to GitHub Pages, but only runs if **both** jobs above
-   succeed (`needs: [backend, build-frontend]`). A failing unit test in either project
-   blocks the deploy — it never reaches this step.
+3. **`e2e`** — boots the real backend and real Angular dev server together and runs the
+   Playwright suite against them (`needs: [backend, build-frontend]`).
+4. **`deploy-frontend`** — deploys to GitHub Pages, but only runs if steps 1–3 **all**
+   succeed (`needs: [backend, build-frontend, e2e]`). Any failing test — unit or
+   end-to-end — blocks the deploy.
 
 Wire up the backend's own deploy step for wherever you're hosting it:
 

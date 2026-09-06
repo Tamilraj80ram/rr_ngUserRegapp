@@ -32,6 +32,12 @@ jobs:
           dotnet restore
           dotnet build --configuration Release --no-restore
 
+      - name: Run backend unit tests
+        working-directory: backend/UserService.Tests
+        run: |
+          dotnet restore
+          dotnet test --configuration Release
+
       - name: Publish UserService
         working-directory: backend/UserService
         run: dotnet publish -c Release -o ../../publish/UserService
@@ -60,6 +66,10 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm install
+
+      - name: Run frontend unit tests
+        working-directory: frontend
+        run: npm run test:ci
 
       - name: Build Angular app
         working-directory: frontend

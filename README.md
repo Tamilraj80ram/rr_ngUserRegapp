@@ -46,6 +46,34 @@ npm start
 Opens at **http://localhost:4200**. The app calls the API at the URL configured in
 `src/environments/environment.ts` (`http://localhost:5000/api` by default).
 
+## Running tests
+
+### Backend (xUnit)
+
+```bash
+cd backend/UserService.Tests
+dotnet test
+```
+
+Covers `PasswordHasher` (hashing/verification), `InMemoryUserStore` (add/find/case-insensitive
+lookup), and full HTTP integration tests for `/api/auth/register`, `/api/auth/login`, and
+`/health` via `WebApplicationFactory` (spins up the real pipeline in-memory, no server needed).
+
+### Frontend (Jasmine/Karma)
+
+```bash
+cd frontend
+npm run test        # interactive, watches for changes, opens Chrome
+npm run test:ci      # single run, headless — used in CI
+```
+
+Covers `AuthService` (HTTP calls + error-message mapping via `HttpClientTestingModule`),
+`RegisterComponent` and `LoginComponent` (form validation, submit behavior, success/error
+paths using a mocked `AuthService`), and a smoke test for `AppComponent`.
+
+Both suites run automatically in `.github/workflows/deploy.yml` on every push/PR, before
+the build/deploy steps.
+
 ## API summary
 
 | Method | Route                | Body                                   | Notes                        |

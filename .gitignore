@@ -1,11 +1,13 @@
 # .NET
 backend/**/bin/
 backend/**/obj/
+backend/**/TestResults/
 
 # Angular / Node
 frontend/node_modules/
 frontend/dist/
 frontend/.angular/
+frontend/coverage/
 
 # OS / IDE
 .DS_Store

@@ -108,3 +108,7 @@ users.MapGet("/{id:guid}", (Guid id, IUserStore store) =>
 });
 
 app.Run();
+
+// Exposes the implicit Program class generated for top-level statements so
+// WebApplicationFactory<Program> can be used from the test project.
+public partial class Program { }

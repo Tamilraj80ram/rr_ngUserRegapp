@@ -75,6 +75,14 @@ jobs:
         working-directory: frontend
         run: npm run build -- --configuration production --base-href /${{ github.event.repository.name }}/
 
+      - name: Add SPA fallback for GitHub Pages routing
+        if: github.ref == 'refs/heads/main'
+        # GitHub Pages only serves real files, so a direct link or refresh on
+        # an Angular route like /register 404s. Copying index.html to 404.html
+        # makes Pages fall back to the app shell for any unknown path, and
+        # Angular's router then renders the right route client-side.
+        run: cp frontend/dist/frontend/browser/index.html frontend/dist/frontend/browser/404.html
+
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3

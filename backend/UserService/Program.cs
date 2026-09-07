@@ -5,6 +5,14 @@ using UserService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Render (and most PaaS hosts) inject the port to listen on via the PORT
+// env var instead of using a fixed port like the local launchSettings.json.
+var renderPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(renderPort))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{renderPort}");
+}
+
 // ---- Services ----------------------------------------------------------
 
 builder.Services.AddSingleton<IUserStore, InMemoryUserStore>();
@@ -15,8 +23,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(CorsPolicy, policy =>
     {
         policy
-            // Add your deployed frontend origin here too, e.g. "https://yourname.github.io"
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins(
+                "http://localhost:4200",
+                "https://tamilraj80ram.github.io" // deployed Angular frontend (GitHub Pages)
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -27,6 +37,7 @@ var app = builder.Build();
 app.UseCors(CorsPolicy);
 
 // ---- Helpers -------------------------------------------------------------
+
 
 static UserResponse ToResponse(User u) => new(u.Id, u.FullName, u.Email, u.CreatedAtUtc);
 

@@ -143,3 +143,10 @@ Wire up the backend's own deploy step for wherever you're hosting it:
 **Required one-time setup:** in the repo, go to **Settings → Pages** and set
 **Source → GitHub Actions** (not "Deploy from a branch") — this workflow deploys via
 GitHub's OIDC-based Pages action, not a `gh-pages` branch push.
+
+**Note on client-side routes:** GitHub Pages only serves static files, so a direct
+link or page refresh on an Angular route (e.g. `/register`) would normally 404 —
+Pages has no idea that path should be handled by the Angular router. The workflow
+works around this by copying the built `index.html` to `404.html`, so Pages falls
+back to serving the app shell for any unrecognized path, and Angular's router takes
+it from there.
